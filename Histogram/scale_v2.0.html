@@ -64,7 +64,7 @@
 				var __DEFAULT__ = { 			//默认参数
 					dataArr: [82, 154, 268, 210, 370], 
 					xAis: ["2016-06", "2016-07", "2016-08", '2016-09', "2016-10"], 
-					legend:["上午","下午","晚上"], 
+					legend:["上午","下午","黄昏","深夜","凌晨"], 
 					xAisFontSize: "12px",
 					yAisFontSize: "12px",
 					color:["#c23531","#91c7ae","#d48265","#ca8622","#2f4554","#61a0a8","#37a"],
@@ -231,7 +231,7 @@
 						
 						//配置坐标（0,0）原点在容器内的位置
 						this.originX = this.W * 0.1;
-						this.originY = this.H * 0.95;
+						this.originY = this.H * 0.93;
 						
 						this.num = this.acount(max) / 5;
 		
@@ -317,7 +317,7 @@
 						ctx.font = options.xAisFontSize + " Microsoft yahei";
 						ctx.textAlign = "start";
 						ctx.textBaseline = "bottom";
-						var h = Math.ceil(this.H * 0.04);
+						var h = 18; 		//Math.ceil(this.H * 0.04);
 						options.xAis.forEach(function(item, index){
 							var textW = ctx.measureText(item).width,
 								spacing;
@@ -393,16 +393,38 @@
 							x = this.W * 0.15,
 							y = 10,
 							h = 20,
-							w = 45,
+							w = 40,
 							r = 5,
-							length = x;
+							length = x,
+							empty = 15,
+							maxLengthArr;
 						
 						ctx.save();
 						ctx.translate(-this.originX, -this.originY);
 						
 						ctx.textAlign = "start";
 						ctx.textBaseline = "top";
-						for (var i = 0; i < options.legend.length; i++) {
+						
+						maxLengthArr = options.dataArr.reduce(function(prev, cur, index){
+							var maxLengthArr = [];
+							if (prev.length >= cur.length) {
+								maxLengthArr = prev;
+							}else{
+								maxLengthArr = cur;
+							}
+							return maxLengthArr;
+						},[]);
+						
+						if (this.H < 450 && this.W < 450) {
+							x = 30;
+							y = 5;
+							w = 35;
+							r = 3;
+							length = x;
+							empty = 10;
+						}
+			
+						for (var i = 0; i < maxLengthArr.length; i++) {
 							var spacing = ctx.measureText(options.legend[i]).width;
 							
 							ctx.fillStyle = options.color[i];
@@ -411,7 +433,7 @@
 							ctx.fillStyle = "#000";
 							ctx.fillText( options.legend[i], length + w, y);
 							if (length < (this.W - x - w - 30)) {
-								length = length + spacing + w + 20;
+								length = length + spacing + w + empty;
 							}else{
 								length = x;
 								y = h * 2;
@@ -628,15 +650,14 @@
 				width: 10,
 				emptySpace:5,
 //				color:["red","orange","blue"],
-				dataArr: [540, [390,460], 930, 110, 125], //[120,220,374,456,900] //,641,710]
+				dataArr: [540, [390,168,12,889,689], 930, 110, 125],//[[101,203,301],[44,506,214],[780,80,14],[14,222],[101,267,298],[200,300],[333,225]], //[120,220,374,456,900] //,641,710]
 					/*[540, 390, 930, 110, 125] //
 					 * [1510,12,93,84,50]
-					 *[[101,203,301],[44,506,214],[780,80,14],[14,222],[101,267,298],[200,300],[333,225]]
 					 * [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]
 					 * [[201,153,61],[440,306,614],[98,800,104],[104,260,222],[401,367,498]]
 					 * */
-				container : document.getElementById("test"),
-				xAis: ["周一", '周二', "周三", "周四", "周五"]//,"周六","周日"]
+//				container : document.getElementById("test"),
+				xAis: ["周一", '周二', "周三", "周四", "周五"],//"周六","周日"]
 			});
 		</script>
 	</body>
