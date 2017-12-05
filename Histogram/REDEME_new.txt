@@ -1,0 +1,195 @@
+****************详细说明****************
+	***************事件调用说明**************
+		目前,事件接口只有一个,为自定义事件“afterClick”,即柱状图主题各部分柱状图点击之后，发生的事件。
+		调用说明：DrawHistogram(options)
+					.addHandler('afterClick',function(event, args){
+							//类似jQuery中,链接式调用
+							//其中args为对象,包含五个属性,其中
+							index :	 //当前点击的柱状图序列号
+							oldData: //可访问原options.dataArr.data, 
+							newData: //可访问原options.newData,
+							oldXais: //可访问原options.xAis,
+							newXais: //可访问原options.newXais
+					})
+		e.g 	var h1 = DrawHistogram(options).
+							.addHandler('afterClick',function(event, args){
+								h1.options.dataArr.data = newData[args.index];
+								//通过改变实例h1.options.dataArr.data实现数据重绘
+							})
+	
+	***************事件调用说明**************
+	
+	*****************参数说明****************
+	
+		dataArr: {							//数据对象,包含文字显示开关,格式化,数据来源;	
+			_switch: true,					//柱状图上方文字显示开关   	( 默认 true )
+			format: 1,						//格式化数值			 		( 默认 1 )
+			data: [],						//绘制显示的数据;			
+		},
+		newData: [],						//柱状图点击事件之后切换的数据来源
+		
+		xAis: [],							//X轴显示的文字信息;
+		
+		newXais:[],							//柱状图点击事件,X轴变更之后显示的字体信息
+			
+		container: document.body,			//柱状图绘制区域				( 默认 body )
+		
+		legend: {							//柱状图说明对象 (单位px)
+			_switch: false,					//图例开启开关 				( 默认 false )
+			positions: "right"("top","default")				//图例位置配置				( 默认 right)
+			width: 20,						//图例前矩形有色区块宽度		( 默认 20 )
+			height: 15,						//图例前矩形有色区块高度		( 默认 15 )
+			empty: 8,						//图例前矩形有色区块与文字间隔( 默认 8 )
+			text: []						//图例说明文字来源
+		},
+		
+		title: {							//柱状图左上标题配置
+			leftY: {					
+				_switch: false,				//标题配置开关 				( 默认 false )
+				color: "#000",				//标题显示颜色				( 默认 黑色 )
+				fontSize: "16px",			//标题字体大小				( 默认 16px )
+				text: " **** {value}"		//标题配置格式（配合dataArr.format使用)   在此字符串中, ‘{value}’不要省略
+			}
+		},
+		
+		xAisFontSize: "12",					//X轴显示文字字体大小			( 默认 12)
+		yAisFontSize: "12",					//Y轴显示文字字体大小			( 默认 12)
+		
+		color: 								//柱状图颜色配置				
+				["#c23531", "#91c7ae","#d48265", "#ca8622",
+				 "#2f4554", "#61a0a8", "#37a"],							( 默认 颜色配置 )
+				
+		emptySpace: 15,						//柱状图空隙间隔配置 			( 默认 15 )
+		
+		widths: {							//柱状图宽度配置
+			_switch: true,					//自适应长度开关             		( 默认 true )
+			length: 15						//非自适应下,柱状图的宽度
+		},
+		
+		backgroundColor: {					//画布背景配置
+			ctx: {	
+				_switch: true,				//画布中间区域开启开关		( 默认 true )
+				color: "#fff8dc"			//画布中间区域颜色配置		( 默认 #fff8dc )
+			},
+			canvas: {
+				_switch: true,				//画布四周区域开启开关		( 默认 true )
+				color: "#ffe4c4"			//画布四周区域颜色配置		( 默认 #ffe4c4 )
+			}
+		},
+		
+		startX: 0							//保留对象
+		
+********************************示例说明*********************************
+		
+	*{ dataArr }:	
+		e.g 	dataArr: {							
+					_switch:true,		
+					format:10,						
+					*data:[82, 154, 268, 210],  	//绘制显示的数据;	（必传参数）
+						data:	格式:[数组类型(一维、二维、一维二维混合)] 注意：相应位数据不存在，应该取值为0
+							e.g: [1,2,3] or [[1,2],[3,4]] or [[1],[1,2],[0,3]]；
+				}
+
+
+	*{ newData } 														（必传参数）
+				格式: [ dataArr.data1, dataArr.data2 ]   //dataArr.data1只指代格式,且必须再用一个数组包含;
+					e.g: 	newData:[ [1,2,3] ] 
+					  or 	newData:[ [[1,2],[3,4]], [4,5]] 
+					  or   	newData:[ [[1],[1,2],[0,3]] ]；
+
+	*{ xAis }:															（必传参数）
+				格式:(一维数组)["一","二","三"]
+					e.g		xAis: ["2016-06", "2016-07", "2016-08", '2016-09'],
+									
+									
+	*{ newXais }  														（必传参数）
+				格式:[ xAis1, xAis2]  (xAis1、xAis2只指代为数组格式)
+				e.g: [ ["星期一","星期二","星期三"],["六月","七月","八月"]]
+				
+				
+	*{container }														（必传参数）
+					e.g:  	cantainer: document.getElementById(), ByTagsName()等
+					(若高度有错,和容器之间有间隙,CSS设置html、body的高度为100%);
+
+ 	{ legend }:			若开启使用,则text需要传入内容						（选传参数）
+			    e.g *legend: {
+						_switch:true,	
+						positions:"right" or "default" or "top",  top为上居中,default为右上  right为右中 
+						width:20,		
+						height:15,		
+						empty:8,		
+						*text:["上午","下午","黄昏","深夜","凌晨","六","七"]  
+							格式:(一维数组)  数组长度应与color配置数组长度相等;	
+					}
+
+	{ title }			若开启使用,则text需要传入内容						（选传参数）
+			    e.g title:{
+						leftY:{
+							_switch:true,		
+							color:"#000",		
+							fontSize:"16px",	
+							*text:"周产量图 ( 单位: {value} )"	
+								注意,在此字符串中, ‘{value}’字符段必须加入，位置不做要求
+								e.g  "( 单位: {value} ) 周产量图 " or  " 单位: {value}"
+						}
+				}
+				
+				
+ 	{ color }:															（选传参数）
+					格式:(一维数组 )   	项数应该与dataArr.data数组长度相等;
+					e.g    	color:["red","orange","green","blue"], 
+
+
+	{ emptySpace } 	e.g   emptySpace: 30,								（选传参数）
+
+	{ widths }															（选传参数）
+				e.g widths: {
+					_switch:false,		
+					length: 25			
+				},
+
+	{ xAisFontSize } 格式"15"											（选传参数）
+					e.g   xAisFontSize: 15,
+
+	{ yAisFontSize } 格式"15"											（选传参数）
+					e.g   yAisFontSize: 15,
+
+
+	{backgroundColor} 													（选传参数）
+			e.g	backgroundColor:{
+					ctx:{					
+						_switch:true,		
+						color:"#fff8dc"		
+					},
+					canvas:{				
+						_switch:true,		
+						color:"#ffe4c4"		
+					}
+				},
+
+			****************参数说明****************
+			
+..............................................................................
+		****************函数插件、及事件说明****************
+		在插件内：
+				__DEFAULT__	为默认参数配置对象；
+				utils		为工具对象；
+				DrawHistogram 为插件主体
+				Histogram、RoundRect为辅助对象
+				
+				this.mouse		记录鼠标在画布中的位置
+				this.origin		记录画布原点位置
+       	事件：update()更新函数是插件内，很多事件函数依附的主体；
+			 	窗口大小改变事件,于resize()函数内,采用函数防抖,节流,绑定window.resize事件，调用的也是update()函数;
+				柱状图点击事件,切换数据显示,也调用了update()函数；(	可实现数据轮回切换	)
+						内在原因是为 dataArr.data 使用了Object.defineProperty,设置钩子函数；
+						在点击事件发生后,将当前的数据,push进入newData内，
+						下一步,dataArr.data = newData.shift();触发set勾子函数,调用update(),
+
+					e.g   var h1 = DrawHistogram(options)
+		若想实现,X轴坐标,标题位置变更等,可
+						e.g  h1.xAis = newArr[];
+						然后调用   h1.update()实现效果切换、重绘;
+		即,列出的参数,基本都可配置后,再调用update(),进行重绘;
+
+		****************函数插件、及事件说明****************
