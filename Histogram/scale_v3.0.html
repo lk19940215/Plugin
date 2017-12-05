@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<title>canvas 直方图插件</title>
+		<script type="text/javascript" src="js/Histogram.js" ></script>
+		<style>
+			*{
+				margin:0;
+			}
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				font-size:13px;
+				font-family: "microsoft yahei", "arial", "helvetica", "sans-serif";
+				position: relative;
+				text-align: center;
+			}
+			h3 {
+				margin: 0 auto;
+				color: #37a;
+				padding-bottom: 10px;
+				font-family: 微软正黑体;
+			}
+			#test1 {
+				position: relative;
+				width: 80%;
+				height: 60%;
+				border: 1px solid #000;
+				margin: 0 auto;
+				text-align: center;
+			}
+			
+			#test2 {
+				position: relative;
+				width: 80%;
+				height: 60%;
+				border: 1px solid #000;
+				margin: 0 auto;
+				text-align: center;
+			}
+			#test3 {
+				position: relative;
+				width: 80%;
+				height: 60%;
+				border: 1px solid #000;
+				margin: 0 auto;
+				text-align: center;
+			}
+			#test4 {
+				position: relative;
+				width: 80%;
+				height: 60%;
+				border: 1px solid #000;
+				margin: 0 auto;
+				text-align: center;
+			}
+			#test5 {
+				position: relative;
+				width: 80%;
+				height: 60%;
+				border: 1px solid #000;
+				margin: 0 auto;
+				text-align: center;
+			}
+			canvas {
+				border: 1px solid #000;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<h3>示例一：只传入必传参数</h3>
+		<div id="test1">
+		</div>
+		<br />
+		<br />
+		<br />
+		
+		<h3>示例二：传入必传参数、配置title和emptySpace</h3>
+		<div id="test2">
+		</div>
+		<br />
+		<br />
+		<br />
+		
+		<h3>示例三：传入必传参数、配置title和legend</h3>
+		<div id="test3">
+		</div>
+		<br />
+		<br />
+		<br />
+		
+		<h3>示例四：完整示例</h3>
+		
+		<div id="test4">
+		</div>
+		<br />
+		<br />
+		<br />
+		
+		<h3>示例五: 调用自定义事件‘afterClick’</h3>
+		
+		<div id="test5">
+		</div>
+		
+		<script>
+			var DataArr = {
+				"1":[[10,11],[13,16],[14,18],[15,19]],
+				"2":[[20,21],[23,26],[24,28],[25,29]],
+				"3":[[30,31],[33,36],[34,38],[35,39]],
+				"4":[[40,41],[43,46],[44,48],[45,49]],
+				"5":[[50,51],[53,56],[54,58],[55,59]],
+				"6":[[60,61],[62,67],[64,68],[65,69]],
+				"7":[[70,71],[72,77],[74,78],[75,79]],
+				"8":[[80,81],[83,86],[84,88],[85,89]],
+				"9":[[90,91],[92,97],[94,98],[95,99]],
+				"10":[[100,101],[103,106],[104,108],[105,109]],
+				"11":[[112,117],[113,116],[114,118],[115,119]],
+				"12":[[120,121],[122,127],[123,126],[125,129]],
+			}
+			//注意下方使用了window.resize事件,此处用于解决屏幕大小改动之后,不重绘的BUG 
+		
+				//必传示例
+			var h1 = DrawHistogram({
+				dataArr: {										//必传
+					data:[120,130, 210,220,230, 330,340],	//必传
+				},
+				newData:[ [[204,200],[40,0,180],[70,148,249]] , [[123,224],[336,347],[456,552]]],//必传
+				container: document.getElementById('test1'),	//必传(默认body)
+				xAis: ["周一", '周二', "周三","4","5","6","7"]					//必传
+			});
+			
+				//传入title,此时开启标题说明 （即配置leftY._switch为true）, title.text必须传值
+			var h2 = DrawHistogram({
+				dataArr: {
+					gradient: true,
+					data:[[230,240], [106,0,440], [130,540]],
+				},
+				newData:[[[8,9],[10,11],[12,13]]],
+				container: document.getElementById('test2'),
+				xAis: ["周一", '周二', "周三"],
+				title: {
+					leftY: {
+						_switch: true,
+						text: "示例二 ( 单位: {value} )" //在此字符串中, ‘{value}’不要省略
+					}
+				},
+				emptySpace:5
+			});
+			
+				//传入legend,此时开启图例说明,(即配置legend._switch为true, 图例说明有点击动画), legend.text必须传值
+			var h3 = DrawHistogram({
+				dataArr: {
+					data:[[89,470], [240,10,540], [330,120]],
+				},
+				newData:[[[80,189],[240,333],[112,343]]],
+				container: document.getElementById('test3'),
+				xAis: ["周一", '周二', "周三"],
+				title: {
+					leftY: {
+						_switch: true,
+						text: "示例三 ( 每一格: {value} )" //在此字符串中, ‘{value}’不要省略
+					}
+				},
+				legend: {
+					_switch: true,
+					positions: "right",
+					text: ["百度", "腾讯", "阿里", "京东"]
+				}
+			});
+			
+				//完整示例
+			var h4 = DrawHistogram({
+				dataArr: {
+					gradient: true,
+					_switch: false, //是否显示柱状图上方文字
+					format: 10,
+					data:[[111,222], [320,444,555], [666,777]],
+				},
+				newData:[[[987,876],[765,600],[654,400]]],
+				container: document.getElementById('test4'),
+				xAis: ["第一季度", '第二季度', "第三季度"],
+				title: {
+					leftY: {
+						_switch: true,
+						text: "示例四 ( 单位: {value} )" //在此字符串中, ‘{value}’不要省略
+					}
+				},
+				xAisFontSize: "18",
+				yAisFontSize: "15",
+				legend: {
+					_switch: true,
+					positions: "top", 
+					width: 30,
+					height: 25,
+					empty: 10,
+					text: ["飞机", "火车", "汽车", "轮船"]
+				},
+				widths: {
+					_switch: false,
+					length: 30
+				},
+				backgroundColor: {
+					ctx: {
+						color: "#fff0f5"
+					},
+					canvas: {
+						color: "#cccccc"
+					}
+				}
+			});
+			
+			var h5 = DrawHistogram({
+				dataArr: {
+					data:[[800,400], [200,500,700], [503,452],[457,377,655]],
+				},
+				container: document.getElementById('test5'),
+				xAis: ["一", '二', "三","四"],
+				emptySpace:5,
+				legend: {
+					_switch: true,
+					positions: "right",
+					text: ["百度", "腾讯", "阿里", "京东"]
+				},
+				newXais:[["五","六","七","八"],["九","十","十一","十二"]]
+			}).addHandler('afterClick',function(event, args){
+				alert("当前点击第" + args.index + "柱状图")	//
+				h5.options.dataArr.data = DataArr[args.index];
+			});
+			
+//				newData:[[[80,189],[240,333],[112,343],[89,54]],[[199,81,14,50],[14,26,22],[40,37,48],[89,91,86]]],
+			//屏幕大小改变,多个实例共存,调用各个实例的update()重绘
+			
+		</script>
+	</body>
+
+</html>
